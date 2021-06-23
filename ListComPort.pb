@@ -1,6 +1,6 @@
 ﻿;{
 ; * Arguments.pbi
-; Version: 0.0.4
+; Version: 1.0.0
 ; Author: Herwin Bozet
 ; 
 ; A basic arguments parser.
@@ -15,6 +15,10 @@
 
 EnableExplicit
 
+CompilerIf #PB_Compiler_ExecutableFormat <> #PB_Compiler_Console
+	CompilerError("this program need to be compiled as a console application !")
+CompilerEndIf
+
 
 ;- Constants
 
@@ -27,11 +31,19 @@ EnableExplicit
 
 If Not OpenConsole("lscom")
 	; TODO: Play Windows error bell sound
+	MessageRequester("Fatal error !", "Failed to open the console !",
+	                 #PB_MessageRequester_Ok | #PB_MessageRequester_Error)
 	End 1
 EndIf
 
 CompilerIf #PB_Compiler_OS = #PB_OS_Windows
 	XIncludeFile "./Includes/SerialHelper_Win32.pbi"
+	
+	If Not SerialHelper::RegGetValueW
+		ConsoleError("Cannot continue without being able to use RegGetValueW() !")
+		SerialHelper::Finish()
+		End 2
+	EndIf
 CompilerElse
 	CompilerError "Non-windows platforms are not supported !"
 CompilerEndIf
@@ -49,10 +61,10 @@ Define SortingOrder.b = #Sort_Order_None
 If Arguments::Init()
 	Define HasRegisteredArgumentsCorrectly.b = #True
 	
-	Define *HelpOption.Arguments::Option = Arguments::CreateOption('h', "help", "Display the help text")
-	If Not Arguments::RegisterOption(*HelpOption)
-		ConsoleError("Failed to register *HelpOption !")
-		Arguments::FreeOption(*HelpOption)
+	Define *NameAllOption.Arguments::Option = Arguments::CreateOption('a', "show-all", "Display the complete port's name (Equal to -dfn)")
+	If Not Arguments::RegisterOption(*NameAllOption)
+		ConsoleError("Failed to register *NameAllOption !")
+		Arguments::FreeOption(*NameAllOption)
 		HasRegisteredArgumentsCorrectly = #False
 	EndIf
 	
@@ -67,6 +79,13 @@ If Arguments::Init()
 	If Not Arguments::RegisterOption(*NameFriendlyOption)
 		ConsoleError("Failed to register *NameFriendlyOption !")
 		Arguments::FreeOption(*NameFriendlyOption)
+		HasRegisteredArgumentsCorrectly = #False
+	EndIf
+	
+	Define *HelpOption.Arguments::Option = Arguments::CreateOption('h', "help", "Display the help text")
+	If Not Arguments::RegisterOption(*HelpOption)
+		ConsoleError("Failed to register *HelpOption !")
+		Arguments::FreeOption(*HelpOption)
 		HasRegisteredArgumentsCorrectly = #False
 	EndIf
 	
@@ -94,9 +113,10 @@ If Arguments::Init()
 	If HasRegisteredArgumentsCorrectly
 		If Not Arguments::ParseArguments(0, CountProgramParameters())
 			If *HelpOption\WasUsed
-				PrintN("lscom.exe [-d|--show-device] [-f|--show-friendly] [-h|--help] [-n|--show-name-raw] [-s|--sort] [-S|--sort-reverse]")
+				PrintN("lscom.exe [-a|--show-all] [-d|--show-device] [-f|--show-friendly] [-h|--help] [-n|--show-name-raw] [-s|--sort] [-S|--sort-reverse]")
 				PrintN("")
 				PrintN("Arguments:")
+				PrintN("-a, --show-all       Display the complete port's name (Equal to '-dfn')")
 				PrintN("-d, --show-device    Displays the port's device name")
 				PrintN("-f, --show-friendly  Displays the port's friendly name")
 				PrintN("-h, --help           Display the help text")
@@ -135,6 +155,7 @@ If Arguments::Init()
 				PrintN(" * '-n' and '-d' and '-f'")
 				PrintN("   > $RawName - $FriendlyName [$DeviceName]")
 				PrintN("     > COM1 - Communications Port [\Device\Serial1]")
+				SerialHelper::Finish()
 				End 0
 			EndIf
 			
@@ -149,6 +170,12 @@ If Arguments::Init()
 			EndIf
 			
 			If *NameRawOption\WasUsed
+				ShouldPrintRawNames = #True
+			EndIf
+			
+			If *NameAllOption\WasUsed
+				ShouldPrintDeviceNames = #True
+				ShouldPrintFriendlyNames = #True
 				ShouldPrintRawNames = #True
 			EndIf
 			
@@ -175,15 +202,69 @@ EndIf
 
 ;-> Listing ports
 
-Global NewMap ComPortDeviceName.s()
-If SerialHelper::GetComPortDeviceNameMap(ComPortDeviceName()) <> -1
-	ForEach ComPortDeviceName()
-		PrintN(ComPortDeviceName())
+Global IsDoingFine.b = #True
+Global NewMap ComPortDeviceNames.s()
+Global NewList ComPortRawNames.s()
+Global NewMap ComPortFriendlyNames.s() ; May not be used depending on the options used.
+
+If SerialHelper::GetComPortDeviceNameMap(ComPortDeviceNames()) <> -1
+	ForEach ComPortDeviceNames()
+		AddElement(ComPortRawNames())
+		ComPortRawNames() = MapKey(ComPortDeviceNames())
 	Next
+	
+	If ShouldPrintFriendlyNames
+		If SerialHelper::GetComPortFriendlyNameList(ComPortRawNames(), ComPortFriendlyNames(), #True) = -1
+			ConsoleError("Failed to list the friendly names !")
+			IsDoingFine = #False
+		EndIf
+	EndIf
 Else
 	ConsoleError("Failed to list the COM ports !")
+	IsDoingFine = #False
 EndIf
 
-Debug Str(SerialHelper::GetComPortDeviceNameMap(ComPortDeviceName())) + " port(s) found !"
+If IsDoingFine
+	If SortingOrder = #Sort_Order_Ascending
+		SortList(ComPortRawNames(), #PB_Sort_Ascending | #PB_Sort_NoCase)
+	EndIf
+	
+	If SortingOrder = #Sort_Order_Descending
+		SortList(ComPortRawNames(), #PB_Sort_Descending | #PB_Sort_NoCase)
+	EndIf
+	
+	ForEach ComPortRawNames()
+		If ShouldPrintRawNames
+			Print(ComPortRawNames())
+			
+			If ShouldPrintFriendlyNames
+				Print(" - "+ComPortFriendlyNames(ComPortRawNames()))
+			EndIf
+			
+			If ShouldPrintDeviceNames
+				PrintN(" ["+ComPortDeviceNames(ComPortRawNames())+"]")
+			Else
+				Print(#CRLF$)
+			EndIf
+		Else
+			If ShouldPrintFriendlyNames
+				Print(ComPortFriendlyNames(ComPortRawNames()))
+				If ShouldPrintDeviceNames
+					PrintN(" ["+ComPortDeviceNames(ComPortRawNames())+"]")
+				Else
+					Print(#CRLF$)
+				EndIf
+			Else
+				PrintN(ComPortDeviceNames(ComPortRawNames()))
+			EndIf
+		EndIf
+	Next
+EndIf
 
-FreeMap(ComPortDeviceName())
+; Cleaning...
+FreeMap(ComPortDeviceNames())
+FreeList(ComPortRawNames())
+FreeMap(ComPortFriendlyNames())
+
+SerialHelper::Finish()
+End 0

@@ -1,5 +1,9 @@
 ﻿
 DeclareModule SerialHelper
+	Prototype.i _RegGetValueW(hKey.l, lpSubKey.s, lpValue.s, dwFlags.l, *pdwType, *pvData, *pcbData)
+	
+	Global RegGetValueW._RegGetValueW = #Null
+	
 	; Returns a positive integer representing the amount of COM port available.
 	; Returns -1 is any error occured.
 	Declare.i GetComPortDeviceNameMap(Map ComPortDeviceNames.s())
@@ -13,8 +17,7 @@ Module SerialHelper
 	
 	EnableExplicit
 	
-	Prototype.i _RegGetValueW(hKey.l, lpSubKey.s, lpValue.s, dwFlags.l, *pdwType, *pvData, *pcbData)
-	Global RegGetValueW._RegGetValueW = #Null
+	
 	Global LibrariIdAdvapi32 = OpenLibrary(#PB_Any, "Advapi32.dll")
 	
 	If IsLibrary(LibrariIdAdvapi32)
@@ -86,8 +89,9 @@ Module SerialHelper
 					Debug "> No more items !"
 					Break
 				Else ; Implies #ERROR_SUCCESS or #ERROR_MORE_DATA
-					Debug "> "+PeekS(*KeyStringBuffer, #Name_Buffer_Size) + " #> "+PeekS(*ValueStringBuffer, #Data_Buffer_Size)
-					ComPortDeviceNames(PeekS(*KeyStringBuffer, #Name_Buffer_Size)) = PeekS(*ValueStringBuffer, #Data_Buffer_Size)
+					Debug "> "+PeekS(*ValueStringBuffer, #Data_Buffer_Size)+" #> "+PeekS(*KeyStringBuffer, #Name_Buffer_Size)
+					;ComPortDeviceNames(PeekS(*KeyStringBuffer, #Name_Buffer_Size)) = PeekS(*ValueStringBuffer, #Data_Buffer_Size)
+					ComPortDeviceNames(PeekS(*ValueStringBuffer, #Data_Buffer_Size)) = PeekS(*KeyStringBuffer, #Name_Buffer_Size)
 				EndIf
 			Next
 			
@@ -110,7 +114,7 @@ Module SerialHelper
 		If GetComPortDeviceNameMap(ComPortDeviceNames()) <> -1
 			ForEach ComPortDeviceNames()
 				AddElement(ComPortList())
-				ComPortList() = ComPortDeviceNames()
+				ComPortList() = MapKey(ComPortDeviceNames())
 			Next
 		EndIf
 		
