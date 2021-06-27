@@ -7,17 +7,64 @@
   <section name="data">
     <explorer view="C:\ProgramData\PureBasic\Examples\" pattern="0"/>
     <log show="1"/>
-    <lastopen date="2021-06-27 12:00" user="Herwin" host="DESKTOP-FCBVC66"/>
+    <lastopen date="2021-06-27 12:55" user="Herwin" host="DESKTOP-FCBVC66"/>
   </section>
-  <section name="files"/>
+  <section name="files">
+    <file name="ListComPort.pb">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+"/>
+      <fingerprint md5="7387104c834b3538923117eb83030e86"/>
+    </file>
+    <file name="Includes\Arguments.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+      <fingerprint md5="d11b37a645894b6ab5c9d36a6d8f2ec6"/>
+    </file>
+    <file name="Includes\SerialHelper_Win32.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="++"/>
+      <fingerprint md5="41b32b0bb5bb010edeaaba0e194bbd60"/>
+    </file>
+    <file name="Includes\WinAPI_Types.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+      <fingerprint md5="72af2329e4d5db955c175842c1385dcc"/>
+    </file>
+  </section>
   <section name="targets">
-    <target name="Default Target" enabled="1" default="1">
-      <inputfile value=""/>
-      <outputfile value=""/>
-      <options xpskin="1" debug="1"/>
+    <target name="x64" enabled="1" default="1">
+      <inputfile value="ListComPort.pb"/>
+      <outputfile value="lscom-x64.exe"/>
+      <compiler version="PureBasic 5.70 LTS (Windows - x64)"/>
+      <executable value="lscom-x64.exe"/>
+      <options debug="1"/>
       <temporaryexe value="source"/>
-      <compilecount enable="1" value="0"/>
-      <buildcount enable="1" value="0"/>
+      <format exe="console" cpu="0"/>
+      <versioninfo enable="1">
+        <field0 value="1.1.0.0"/>
+        <field1 value="1.1.0.0"/>
+        <field3 value="PB-ListComPort"/>
+        <field4 value="1.1.0"/>
+        <field5 value="1.1.0"/>
+        <field7 value="PB-ListComPort"/>
+        <field8 value="lscom-x64.exe"/>
+        <field14 value="https://github.com/aziascreations/PB-ListComPort"/>
+      </versioninfo>
+    </target>
+    <target name="x86" enabled="1" default="0">
+      <inputfile value="ListComPort.pb"/>
+      <outputfile value="lscom-x86.exe"/>
+      <compiler version="PureBasic 5.70 LTS (Windows - x86)"/>
+      <executable value="lscom-x86.exe"/>
+      <options debug="1"/>
+      <temporaryexe value="source"/>
+      <format exe="console" cpu="0"/>
+      <versioninfo enable="1">
+        <field0 value="1.1.0.0"/>
+        <field1 value="1.1.0.0"/>
+        <field3 value="PB-ListComPort"/>
+        <field4 value="1.1.0"/>
+        <field5 value="1.1.0"/>
+        <field7 value="PB-ListComPort"/>
+        <field8 value="lscom-x86.exe"/>
+        <field14 value="https://github.com/aziascreations/PB-ListComPort"/>
+      </versioninfo>
     </target>
   </section>
 </project>
