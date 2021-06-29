@@ -1,4 +1,7 @@
 ﻿
+XIncludeFile "./RegistryHelper.pbi"
+XIncludeFile "./WinTypes.pbi"
+
 DeclareModule SerialHelper
 	Prototype.i _RegGetValueW(hKey.l, lpSubKey.s, lpValue.s, dwFlags.l, *pdwType, *pvData, *pcbData)
 	
@@ -13,10 +16,9 @@ DeclareModule SerialHelper
 EndDeclareModule
 
 Module SerialHelper
-	XIncludeFile "./WinAPI_Types.pbi"
-	
 	EnableExplicit
 	
+	UseModule WinTypes
 	
 	Global LibrariIdAdvapi32 = OpenLibrary(#PB_Any, "Advapi32.dll")
 	
@@ -239,8 +241,9 @@ Module SerialHelper
 					
 					; Getting the value...
 					Protected ReturnedValue.i = 0
+					
 					If RegGetValueW(#HKEY_LOCAL_MACHINE, SubSubSubKeys(), "FriendlyName",
-					                $00000002, #Null, *ValueStringBuffer, @ValueStringSize) = #ERROR_SUCCESS
+					                                 $00000002, #Null, *ValueStringBuffer, @ValueStringSize) = #ERROR_SUCCESS
 						AddElement(FriendlyNames())
 						FriendlyNames() = PeekS(*ValueStringBuffer, #Data_Buffer_Size)
 					EndIf
