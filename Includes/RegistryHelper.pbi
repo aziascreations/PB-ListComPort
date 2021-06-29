@@ -1,7 +1,7 @@
 ﻿;{- Code Header
 ; ==- Basic Info -================================
 ;         Name: RegistryHelper.pbi
-;      Version: 0.0.2-indev
+;      Version: 1.0.0
 ;       Author: Herwin Bozet
 ;
 ; ==- Compatibility -=============================
@@ -33,11 +33,11 @@ CompilerEndIf
 DeclareModule RegistryHelper
 	;-> Semver Data
 	
-	#Version_Major = 0
+	#Version_Major = 1
 	#Version_Minor = 0
-	#Version_Patch = 2
-	#Version_Label$ = "indev"
-	#Version$ = "0.0.2"+"-"+#Version_Label$
+	#Version_Patch = 0
+	#Version_Label$ = ""
+	#Version$ = "1.0.0";+"-"+#Version_Label$
 	
 	
 	;-> Library Imports
@@ -291,7 +291,7 @@ Module RegistryHelper
 		
 		Protected *ValueNameBuffer = AllocateMemory(#Size_ValueName+1)
 		Protected ValueNameSize.i = #Size_ValueName
-			
+		
 		If Not *ValueNameBuffer
 			DebuggerError("Failed to allocate memory !")
 			CloseReadingKey(RegistryHandle)
@@ -357,7 +357,7 @@ Module RegistryHelper
 		
 		Protected *ValueNameBuffer = AllocateMemory(#Size_ValueName+1)
 		Protected ValueNameSize.i = #Size_ValueName
-			
+		
 		If Not *ValueNameBuffer
 			DebuggerError("Failed to allocate memory !")
 			CloseReadingKey(RegistryHandle)

@@ -1,6 +1,6 @@
 ﻿;{
 ; * ListComPort.pb
-; Version: 3.0.0-indev
+; Version: 2.1.0
 ; Author: Herwin Bozet
 ;
 ; License: Unlicense (Public Domain)
@@ -33,10 +33,7 @@ CompilerEndIf
 
 ;- Constants
 
-#Version$ = "3.0.0-indev"
-#Sort_Order_Descending = -1
-#Sort_Order_None = 0
-#Sort_Order_Ascending = 1
+#Version$ = "2.1.0"
 
 
 ;- Code
@@ -58,7 +55,7 @@ Global ExitCode.i = #LSCOM_ErrorCode_NoError
 Global ShouldPrintRawNames.b = #True
 Global ShouldPrintDeviceNames.b = #False
 Global ShouldPrintFriendlyNames.b = #False
-Global SortingOrder.b = #Sort_Order_None
+Global SortingOrder.b = ComPortHelper::#Sort_Order_None
 Global PaddingString$ = #Null$
 
 
@@ -127,6 +124,7 @@ If Arguments::Init()
 				PrintN(#LSCOM_Locale_HelpSection_Remarks$+":")
 				PrintN(" * "+#LSCOM_Locale_Remark_NamePartsAndRawDefault$)
 				PrintN(" * "+#LSCOM_Locale_Remark_NoPrettyPrinting$)
+				PrintN(" * "+#LSCOM_Locale_Remark_DefaultSorting$)
 				PrintN(" * "+#LSCOM_Locale_Remark_NameRaw$)
 				PrintN(" * "+#LSCOM_Locale_Remark_NameDevice$)
 				PrintN(" * "+#LSCOM_Locale_Remark_NameFriendly$)
@@ -184,6 +182,11 @@ If Arguments::Init()
 			
 			If *VersionOption\WasUsed
 				PrintN("PB-ListComPort (lscom) v"+#Version$)
+				PrintN("  ComPortHelper v"+ComPortHelper::#Version$)
+				PrintN("  RegistryHelper v"+RegistryHelper::#Version$)
+				PrintN("  WinTypes v"+WinTypes::#Version$)
+				PrintN("")
+				PrintN("https://github.com/aziascreations/PB-ListComPort")
 				End ExitCode
 			EndIf
 			
@@ -208,11 +211,11 @@ If Arguments::Init()
 			EndIf
 			
 			If *SortAscOption\WasUsed
-				SortingOrder = #Sort_Order_Ascending
+				SortingOrder = ComPortHelper::#Sort_Order_Ascending
 			EndIf
 			
 			If *SortDescOption\WasUsed
-				SortingOrder = #Sort_Order_Descending
+				SortingOrder = ComPortHelper::#Sort_Order_Descending
 			EndIf
 			
 			If *NoPrettyAscOption\WasUsed
@@ -251,119 +254,88 @@ EndIf
 
 ;-> Listing ports
 
+Global IsDoingFine.b = #True
+Global RawToFriendlySeparator$ = " - "
+Global UseDeviceBrackets.b = #True
 
-Global NewList ComDeviceNames.s()
-Global NewList ComPortNames.s()
+Global NewList ComPortDeviceNames.s()
+Global NewList ComPortRawNames.s()
 
-ComPortHelper::GetComPortAndDeviceNameLists(ComDeviceNames(), ComPortNames())
-
-ForEach(ComDeviceNames())
-	SelectElement(ComPortNames(), ListIndex(ComDeviceNames()))
-	Debug ComDeviceNames() + " => " + ComPortNames()
-Next
-
+; May not be used depending on the options used.
 Global NewMap ComPortFriendlyNames.s()
 
-ComPortHelper::GetComPortMappedFriendlyName(ComPortNames(), ComPortFriendlyNames())
+If PaddingString$ = #Null$
+	; No custom padding char was used
+	PaddingString$ = " "
+Else
+	; Custom padding char was used
+	RawToFriendlySeparator$ = PaddingString$
+	UseDeviceBrackets = #False
+EndIf
 
-ForEach(ComPortFriendlyNames())
-	Debug "#M> "+MapKey(ComPortFriendlyNames()) + " -> " + ComPortFriendlyNames()
-Next
 
+If ComPortHelper::GetComPortAndDeviceNameLists(ComPortDeviceNames(), ComPortRawNames()) <> -1
+	If ShouldPrintFriendlyNames
+		If ComPortHelper::GetComPortMappedFriendlyName(ComPortRawNames(), ComPortFriendlyNames(), #True) = -1
+			ConsoleError(#LSCOM_Locale_ErrorExplaination_NoFriendlyNames$)
+			IsDoingFine = #False
+			ExitCode = #LSCOM_ErrorCode_NoFriendlyNames
+		EndIf
+	EndIf
+Else
+	ConsoleError(#LSCOM_Locale_ErrorExplaination_NoComPorts$)
+	IsDoingFine = #False
+	ExitCode = #LSCOM_ErrorCode_NoComPorts
+EndIf
+
+
+If IsDoingFine
+	ComPortHelper::SortDeviceAndRawNameLists(ComPortDeviceNames(), ComPortRawNames(), SortingOrder)
+	
+	ForEach ComPortRawNames()
+		If ShouldPrintRawNames
+			Print(ComPortRawNames())
+			
+			If ShouldPrintFriendlyNames
+				Print(RawToFriendlySeparator$+ComPortFriendlyNames(ComPortRawNames()))
+			EndIf
+			
+			If ShouldPrintDeviceNames
+				SelectElement(ComPortDeviceNames(), ListIndex(ComPortRawNames()))
+				
+				If UseDeviceBrackets
+					PrintN(PaddingString$+"["+ComPortDeviceNames()+"]")
+				Else
+					PrintN(PaddingString$+ComPortDeviceNames())
+				EndIf
+			Else
+				Print(#CRLF$)
+			EndIf
+		Else
+			If ShouldPrintFriendlyNames
+				Print(ComPortFriendlyNames(ComPortRawNames()))
+				If ShouldPrintDeviceNames
+					SelectElement(ComPortDeviceNames(), ListIndex(ComPortRawNames()))
+					
+					If UseDeviceBrackets
+						PrintN(PaddingString$+"["+ComPortDeviceNames()+"]")
+					Else
+						PrintN(PaddingString$+ComPortDeviceNames())
+					EndIf
+				Else
+					Print(#CRLF$)
+				EndIf
+			Else
+				SelectElement(ComPortDeviceNames(), ListIndex(ComPortRawNames()))
+				PrintN(ComPortDeviceNames())
+			EndIf
+		EndIf
+	Next
+EndIf
+
+; Cleaning...
 FreeMap(ComPortFriendlyNames())
-FreeList(ComDeviceNames())
-FreeList(ComPortNames())
+FreeList(ComPortRawNames())
+FreeList(ComPortDeviceNames())
 
-
-
-; Global IsDoingFine.b = #True
-; Global NewMap ComPortDeviceNames.s()
-; Global NewList ComPortRawNames.s()
-; Global NewMap ComPortFriendlyNames.s() ; May not be used depending on the options used.
-; 
-; Global RawToFriendlySeparator$ = " - "
-; Global UseDeviceBrackets.b = #True
-; 
-; If PaddingString$ = #Null$
-; 	; No custom padding char was used
-; 	PaddingString$ = " "
-; Else
-; 	; Custom padding char was used
-; 	RawToFriendlySeparator$ = PaddingString$
-; 	UseDeviceBrackets = #False
-; EndIf
-; 
-; 
-; If SerialHelper::GetComPortDeviceNameMap(ComPortDeviceNames()) <> -1
-; 	ForEach ComPortDeviceNames()
-; 		AddElement(ComPortRawNames())
-; 		ComPortRawNames() = MapKey(ComPortDeviceNames())
-; 	Next
-; 	
-; 	If ShouldPrintFriendlyNames
-; 		PrintN("Getting friendly names")
-; 		If SerialHelper::GetComPortFriendlyNameList(ComPortRawNames(), ComPortFriendlyNames(), #True) = -1
-; 			ConsoleError(#LSCOM_Locale_ErrorExplaination_NoFriendlyNames$)
-; 			IsDoingFine = #False
-; 			ExitCode = #LSCOM_ErrorCode_NoFriendlyNames
-; 		EndIf
-; 	EndIf
-; Else
-; 	ConsoleError(#LSCOM_Locale_ErrorExplaination_NoComPorts$)
-; 	IsDoingFine = #False
-; 	ExitCode = #LSCOM_ErrorCode_NoComPorts
-; EndIf
-; 
-; 
-; If IsDoingFine
-; 	If SortingOrder = #Sort_Order_Ascending
-; 		SortList(ComPortRawNames(), #PB_Sort_Ascending | #PB_Sort_NoCase)
-; 	EndIf
-; 	
-; 	If SortingOrder = #Sort_Order_Descending
-; 		SortList(ComPortRawNames(), #PB_Sort_Descending | #PB_Sort_NoCase)
-; 	EndIf
-; 	
-; 	ForEach ComPortRawNames()
-; 		If ShouldPrintRawNames
-; 			Print(ComPortRawNames())
-; 			
-; 			If ShouldPrintFriendlyNames
-; 				Print(RawToFriendlySeparator$+ComPortFriendlyNames(ComPortRawNames()))
-; 			EndIf
-; 			
-; 			If ShouldPrintDeviceNames
-; 				If UseDeviceBrackets
-; 					PrintN(PaddingString$+"["+ComPortDeviceNames(ComPortRawNames())+"]")
-; 				Else
-; 					PrintN(PaddingString$+ComPortDeviceNames(ComPortRawNames()))
-; 				EndIf
-; 			Else
-; 				Print(#CRLF$)
-; 			EndIf
-; 		Else
-; 			If ShouldPrintFriendlyNames
-; 				Print(ComPortFriendlyNames(ComPortRawNames()))
-; 				If ShouldPrintDeviceNames
-; 					If UseDeviceBrackets
-; 						PrintN(PaddingString$+"["+ComPortDeviceNames(ComPortRawNames())+"]")
-; 					Else
-; 						PrintN(PaddingString$+ComPortDeviceNames(ComPortRawNames()))
-; 					EndIf
-; 				Else
-; 					Print(#CRLF$)
-; 				EndIf
-; 			Else
-; 				PrintN(ComPortDeviceNames(ComPortRawNames()))
-; 			EndIf
-; 		EndIf
-; 	Next
-; EndIf
-; 
-; ; Cleaning...
-; FreeMap(ComPortDeviceNames())
-; FreeList(ComPortRawNames())
-; FreeMap(ComPortFriendlyNames())
-; 
-; SerialHelper::Finish()
 End ExitCode

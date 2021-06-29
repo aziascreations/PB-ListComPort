@@ -34,6 +34,7 @@ Launch arguments:
 ## Remarks
  * If '-d' or '-f' is used, the raw name will not be shown unless '-n' is used.
  * If '-D', '-t' or '-p' are used, the special separator between the raw and friendly name and the square brackets are not shown.
+ * By default, the ports are sorted in the order they are provided by the registry, which is often chronological.
  * The 'raw name' refers to a port name. (e.g.: COM1, COM2, ...)
  * The 'device name' refers to a port device path. (e.g.: \Device\Serial1, ...)
  * The 'friendly name' refers to a port name as seen in the device manager. (e.g.: Communications Port, USB-SERIAL CH340, ...)

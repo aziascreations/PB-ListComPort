@@ -1,7 +1,7 @@
 ﻿;{- Code Header
 ; ==- Basic Info -================================
 ;         Name: ComPortHelper.pbi
-;      Version: 0.0.2
+;      Version: 2.0.0
 ;       Author: Herwin Bozet
 ;
 ; ==- Compatibility -=============================
@@ -48,6 +48,10 @@ DeclareModule ComPortHelper
 	
 	#RegistryValueName_FriendlyName$ = "FriendlyName"
 	
+	#Sort_Order_Descending = -1
+	#Sort_Order_None = 0
+	#Sort_Order_Ascending = 1
+	
 	
 	;-> Macro Definition
 	
@@ -79,6 +83,7 @@ DeclareModule ComPortHelper
 	;-> Procedure Declaration
 	
 	Declare.i GetComPortMappedFriendlyName(List ComPortList.s(), Map ComPortFriendlyNames.s(), FixMissing.b = #True)
+	Declare SortDeviceAndRawNameLists(List DeviceNames.s(), List ComPortNames.s(), SortingMode.b = ComPortHelper::#Sort_Order_None)
 EndDeclareModule
 
 
@@ -177,5 +182,32 @@ Module ComPortHelper
 		EndIf
 		
 		ProcedureReturn ListSize(ComPortList())
+	EndProcedure
+	
+	; This is a quick fix, it may or may not be changed later on.
+	Procedure SortDeviceAndRawNameLists(List DeviceNames.s(), List ComPortNames.s(), SortingMode.b = ComPortHelper::#Sort_Order_None)
+		If SortingMode = #Sort_Order_Ascending Or SortingMode = #Sort_Order_Descending
+			Protected NewMap ComToDeviceMapping.s()
+			
+			ForEach(ComPortNames())
+				SelectElement(DeviceNames(), ListIndex(ComPortNames()))
+				ComToDeviceMapping(ComPortNames()) = DeviceNames()
+			Next
+			
+			ClearList(DeviceNames())
+			
+			If SortingMode = #Sort_Order_Ascending
+				SortList(ComPortNames(), #PB_Sort_Ascending | #PB_Sort_NoCase)
+			ElseIf SortingMode = #Sort_Order_Descending
+				SortList(ComPortNames(), #PB_Sort_Descending | #PB_Sort_NoCase)
+			EndIf
+			
+			ForEach ComPortNames()
+				AddElement(DeviceNames())
+				DeviceNames() = ComToDeviceMapping(ComPortNames())
+			Next
+			
+			FreeMap(ComToDeviceMapping())
+		EndIf
 	EndProcedure
 EndModule
