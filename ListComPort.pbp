@@ -7,40 +7,36 @@
   <section name="data">
     <explorer view="C:\ProgramData\PureBasic\Examples\" pattern="0"/>
     <log show="1"/>
-    <lastopen date="2021-06-29 13:33" user="Herwin" host="DESKTOP-FCBVC66"/>
+    <lastopen date="2021-06-29 14:52" user="Herwin" host="DESKTOP-FCBVC66"/>
   </section>
   <section name="files">
     <file name="Includes\Arguments.pbi">
       <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
       <fingerprint md5="d11b37a645894b6ab5c9d36a6d8f2ec6"/>
     </file>
+    <file name="Includes\ComPortHelper.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="++"/>
+      <fingerprint md5="594c028e6015e620bbdd3efaea636b9c"/>
+    </file>
     <file name="Includes\RegistryHelper.pbi">
       <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="++"/>
-      <fingerprint md5="3b424c6581f0f84203a8122a375f2468"/>
+      <fingerprint md5="86968e1b8c71eeb48dae6dae354a1506"/>
     </file>
     <file name="Includes\WinTypes.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
-      <fingerprint md5="46251466624278d76e8d62a925750d00"/>
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="++"/>
+      <fingerprint md5="b87ebecf815cbe37fb9dae6cb77ea40e"/>
     </file>
     <file name="ListComPort.pb">
       <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+"/>
-      <fingerprint md5="4f1dcba94983147215dfb4bca5a2fe3c"/>
+      <fingerprint md5="e56139774a412da3d49e2a6c16ef50c0"/>
     </file>
     <file name="ListComPortErrorCodes.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+"/>
-      <fingerprint md5="98ffb60033f242011ff4b24a82bb0a69"/>
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+"/>
+      <fingerprint md5=""/>
     </file>
     <file name="ListComPortLocales.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+"/>
-      <fingerprint md5="21c9a3226ac1e25541ea105b84ead6a5"/>
-    </file>
-    <file name="Includes\ComPortHelper.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="++"/>
-      <fingerprint md5="f97a5a92d20438dd98f31a2a33857976"/>
-    </file>
-    <file name="Includes\SerialHelper_Win32_Legacy.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="++"/>
-      <fingerprint md5="ee1e605032314c16a07852b1d451d1fe"/>
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+"/>
+      <fingerprint md5=""/>
     </file>
   </section>
   <section name="targets">

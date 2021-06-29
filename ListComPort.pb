@@ -1,6 +1,6 @@
 ﻿;{
 ; * ListComPort.pb
-; Version: 2.0.0
+; Version: 3.0.0-indev
 ; Author: Herwin Bozet
 ;
 ; License: Unlicense (Public Domain)
@@ -19,14 +19,21 @@ CompilerIf #PB_Compiler_ExecutableFormat <> #PB_Compiler_Console
 	CompilerError("this program need to be compiled as a console application !")
 CompilerEndIf
 
+XIncludeFile "./Includes/ListComPortLocales.pbi"
+XIncludeFile "./Includes/ListComPortErrorCodes.pbi"
+
+XIncludeFile "./Includes/Arguments.pbi"
+
+CompilerIf #PB_Compiler_OS = #PB_OS_Windows
+	XIncludeFile "./Includes/ComPortHelper.pbi"
+CompilerElse
+	CompilerError "Non-windows platforms are not supported !"
+CompilerEndIf
+
 
 ;- Constants
 
 #Version$ = "3.0.0-indev"
-
-XIncludeFile "./ListComPortLocales.pbi"
-XIncludeFile "./ListComPortErrorCodes.pbi"
-
 #Sort_Order_Descending = -1
 #Sort_Order_None = 0
 #Sort_Order_Ascending = 1
@@ -42,14 +49,6 @@ If Not OpenConsole("lscom")
 	                 #PB_MessageRequester_Ok | #PB_MessageRequester_Error)
 	End #LSCOM_ErrorCode_NoTerminal
 EndIf
-
-CompilerIf #PB_Compiler_OS = #PB_OS_Windows
-	XIncludeFile "./Includes/ComPortHelper.pbi"
-CompilerElse
-	CompilerError "Non-windows platforms are not supported !"
-CompilerEndIf
-
-XIncludeFile "./Includes/Arguments.pbi"
 
 
 ;-> Preparing globals
@@ -263,8 +262,18 @@ ForEach(ComDeviceNames())
 	Debug ComDeviceNames() + " => " + ComPortNames()
 Next
 
+Global NewMap ComPortFriendlyNames.s()
+
+ComPortHelper::GetComPortMappedFriendlyName(ComPortNames(), ComPortFriendlyNames())
+
+ForEach(ComPortFriendlyNames())
+	Debug "#M> "+MapKey(ComPortFriendlyNames()) + " -> " + ComPortFriendlyNames()
+Next
+
+FreeMap(ComPortFriendlyNames())
 FreeList(ComDeviceNames())
 FreeList(ComPortNames())
+
 
 
 ; Global IsDoingFine.b = #True

@@ -1,9 +1,15 @@
-﻿;{
-; * RegistryHelper.pbi
-; Version: 0.0.1
-; Author: Herwin Bozet
+﻿;{- Code Header
+; ==- Basic Info -================================
+;         Name: RegistryHelper.pbi
+;      Version: 0.0.2-indev
+;       Author: Herwin Bozet
 ;
-; License: Unlicense (Public Domain)
+; ==- Compatibility -=============================
+;  Compiler version: PureBasic 5.70 (x86/x64)
+;  Operating system: Windows 10 21H1 (Previous versions untested)
+; 
+; ==- Links & License -===========================
+;  License: Unlicense
 ;}
 
 ;- Notes
@@ -25,6 +31,17 @@ CompilerEndIf
 ;- Module Declaration
 
 DeclareModule RegistryHelper
+	;-> Semver Data
+	
+	#Version_Major = 0
+	#Version_Minor = 0
+	#Version_Patch = 2
+	#Version_Label$ = "indev"
+	#Version$ = "0.0.2"+"-"+#Version_Label$
+	
+	
+	;-> Library Imports
+	
 	;{ RegGetValueW Import & loading (Unused due to errors)
 	; Does not work on x64, even if the signature used for the library loading is the same...
 	; 	CompilerIf #PB_Compiler_Processor = #PB_Processor_x86
@@ -57,7 +74,9 @@ DeclareModule RegistryHelper
 	; 	EndIf
 	;}
 	
-	; Not used
+	
+	;-> Constants
+	
 	CompilerIf Not Defined(HKEY_PERFORMANCE_TEXT, #PB_Constant)
 		#HKEY_PERFORMANCE_TEXT = $80000050
 	CompilerEndIf
@@ -75,7 +94,11 @@ DeclareModule RegistryHelper
 	; Used to prevent infinite loops
 	#Failsafe_MaxValueCount = 65536
 	
+	
+	;-> Procedure Declaration
+	
 	Declare.WinTypes::HKEY DetectRootKey(RegistryKey$)
+	Declare.s GetRootKeyName(RootKey.WinTypes::HKEY)
 	Declare.s TrimRootKey(RegistryKey$)
 	
 	Declare.WinTypes::HKEY _OpenReadingKey(RootKey, SubKey$)
@@ -87,8 +110,8 @@ DeclareModule RegistryHelper
 	
 	; TODO: Value exists
 	
-	Declare.i _GetSubKeys(RootKey, SubKey$, List SubKeys.s())
-	Declare.i GetSubKeys(SubKey$, List SubKeys.s())
+	Declare.i _GetSubKeys(RootKey, SubKey$, List SubKeys.s(), PrependRootKey.b = #False, PrependSubKey.b = #False)
+	Declare.i GetSubKeys(SubKey$, List SubKeys.s(), PrependRootKey.b = #False, PrependSubKey.b = #False)
 	
 	Declare.i _GetKeyValuePairAsLists(RootKey, SubKey$, List ValueNames.s(), List Values.s())
 	Declare.i GetKeyValuePairAsLists(SubKey$, List ValueNames.s(), List Values.s())
@@ -101,13 +124,24 @@ DeclareModule RegistryHelper
 	
 	Declare.i _GetKeyValues(RootKey, SubKey$, List Values.s())
 	Declare.i GetKeyValues(SubKey$, List Values.s())
+	
+	Declare.s _GetValue(RootKey, SubKey$, ValueName$, DataType.WinTypes::DWORD = #Null)
+	Declare.s GetValue(SubKey$, ValueName$, DataType.WinTypes::DWORD = #Null)
+	
+	Declare.b _ValueExists(RootKey, SubKey$, ValueName$, DataType.WinTypes::DWORD = #Null)
+	Declare.b ValueExists(SubKey$, ValueName$, DataType.WinTypes::DWORD = #Null)
 EndDeclareModule
 
 
 ;- Module Definition
 
 Module RegistryHelper
+	;-> Compiler Directives
+	
 	EnableExplicit
+	
+	
+	;-> Procedure Definition
 	
 	Procedure.WinTypes::HKEY DetectRootKey(RegistryKey$)
 		Protected KeyRootElement$ = UCase(StringField(RegistryKey$, 1, "\"))
@@ -126,6 +160,23 @@ Module RegistryHelper
 		EndSelect
 		
 		ProcedureReturn #Null
+	EndProcedure
+	
+	Procedure.s GetRootKeyName(RootKey.WinTypes::HKEY)
+		Select RootKey
+			Case #HKEY_CLASSES_ROOT
+				ProcedureReturn "HKEY_CLASSES_ROOT"
+			Case #HKEY_CURRENT_CONFIG
+				ProcedureReturn "HKEY_CURRENT_CONFIG"
+			Case #HKEY_CURRENT_USER
+				ProcedureReturn "HKEY_CURRENT_USER"
+			Case #HKEY_LOCAL_MACHINE
+				ProcedureReturn "HKEY_LOCAL_MACHINE"
+			Case #HKEY_USERS
+				ProcedureReturn "HKEY_USERS"
+		EndSelect
+		
+		ProcedureReturn #Null$
 	EndProcedure
 	
 	Procedure.s TrimRootKey(RegistryKey$)
@@ -169,11 +220,11 @@ Module RegistryHelper
 		ProcedureReturn _KeyExists(DetectRootKey(SubKey$), TrimRootKey(SubKey$))
 	EndProcedure
 	
-	Procedure.i _GetSubKeys(RootKey, SubKey$, List SubKeys.s())
+	Procedure.i _GetSubKeys(RootKey, SubKey$, List SubKeys.s(), PrependRootKey.b = #False, PrependSubKey.b = #False)
 		Protected RegistryHandle.WinTypes::HKEY
 		
-		If RootKey <> #Null
-			Debug "Null 'RootKey' was given !"
+		If RootKey = #Null
+			Debug "Null 'RootKey' was given in '_GetSubKeys()' !"
 			ProcedureReturn -1
 		EndIf
 		
@@ -203,8 +254,16 @@ Module RegistryHelper
 			ReturnedValue = RegEnumKeyEx_(RegistryHandle, i, *KeyStringBuffer, @KeyStringSize, #Null, #Null, #Null, #Null)
 			
 			If ReturnedValue = #ERROR_SUCCESS
+				Protected FinalValue.s = PeekS(*KeyStringBuffer, #Size_KeyName)
+				
+				If PrependRootKey
+					FinalValue = GetRootKeyName(RootKey) + "\" + SubKey$ + "\" + FinalValue
+				ElseIf PrependSubKey
+					FinalValue = SubKey$ + "\" + FinalValue
+				EndIf
+				
 				AddElement(SubKeys())
-				SubKeys() = PeekS(*KeyStringBuffer, #Size_KeyName)
+				SubKeys() = FinalValue
 			ElseIf ReturnedValue = #ERROR_MORE_DATA
 				Debug "Not enough space error !"
 			EndIf
@@ -218,8 +277,8 @@ Module RegistryHelper
 		ProcedureReturn ListSize(SubKeys())
 	EndProcedure
 	
-	Procedure.i GetSubKeys(SubKey$, List SubKeys.s())
-		ProcedureReturn _GetSubKeys(DetectRootKey(SubKey$), TrimRootKey(SubKey$), SubKeys())
+	Procedure.i GetSubKeys(SubKey$, List SubKeys.s(), PrependRootKey.b = #False, PrependSubKey.b = #False)
+		ProcedureReturn _GetSubKeys(DetectRootKey(SubKey$), TrimRootKey(SubKey$), SubKeys(), PrependRootKey, PrependSubKey)
 	EndProcedure
 	
 	Procedure.i _GetKeyValuePairAsLists(RootKey, SubKey$, List ValueNames.s(), List Values.s())
@@ -375,5 +434,46 @@ Module RegistryHelper
 	
 	Procedure.i GetKeyValues(SubKey$, List Values.s())
 		ProcedureReturn _GetKeyValues(DetectRootKey(SubKey$), TrimRootKey(SubKey$), Values())
+	EndProcedure
+	
+	Procedure.s _GetValue(RootKey, SubKey$, ValueName$, DataType.WinTypes::DWORD = #Null)
+		Protected RegistryHandle.WinTypes::HKEY = _OpenReadingKey(RootKey, SubKey$)
+		Protected ReturnValue.s = #Null$
+		
+		If Not RegistryHandle
+			Debug "Failed to open '"+SubKey$+"' !"
+			ProcedureReturn #Null$
+		EndIf
+		
+		Protected *ValueDataBuffer = AllocateMemory(#Size_ValueData_Standard)
+		Protected ValueDataSize.i = #Size_ValueData_Standard
+		
+		If Not *ValueDataBuffer
+			DebuggerError("Failed to allocate memory !")
+			FreeMemory(*ValueDataBuffer)
+			CloseReadingKey(RegistryHandle)
+			ProcedureReturn #Null$
+		EndIf
+		
+		If RegQueryValueEx_(RegistryHandle, ValueName$, #Null, @DataType, *ValueDataBuffer, @ValueDataSize) = #ERROR_SUCCESS
+			ReturnValue = PeekS(*ValueDataBuffer, ValueDataSize)
+		EndIf
+		
+		FreeMemory(*ValueDataBuffer)
+		CloseReadingKey(RegistryHandle)
+		
+		ProcedureReturn ReturnValue
+	EndProcedure
+	
+	Procedure.s GetValue(SubKey$, ValueName$, DataType.WinTypes::DWORD = #Null)
+		ProcedureReturn _GetValue(DetectRootKey(SubKey$), TrimRootKey(SubKey$), ValueName$, DataType)
+	EndProcedure
+	
+	Procedure.b _ValueExists(RootKey, SubKey$, ValueName$, DataType.WinTypes::DWORD = #Null)
+		ProcedureReturn Bool(_GetValue(RootKey, SubKey$, ValueName$, DataType) <> #Null$)
+	EndProcedure
+	
+	Procedure.b ValueExists(SubKey$, ValueName$, DataType.WinTypes::DWORD = #Null)
+		ProcedureReturn _ValueExists(DetectRootKey(SubKey$), TrimRootKey(SubKey$), ValueName$, DataType)
 	EndProcedure
 EndModule

@@ -12,8 +12,7 @@
 ;  https://docs.microsoft.com/en-us/windows/win32/winprog/windows-data-types
 ; 
 ; ==- Links & License -===========================
-;  License: Unlicense (Only applies to the includes, not Microsoft's API)
-;
+;  License: Unlicense
 ;}
 
 ;- Compiler Options
@@ -24,6 +23,15 @@ EnableExplicit
 ;- Module Declaration
 
 DeclareModule WinTypes
+	;-> Semver Data
+	
+	#Version_Major = 0
+	#Version_Minor = 0
+	#Version_Patch = 2
+	#Version_Label$ = ""
+	#Version$ = "0.0.2";+"-"+#Version_Label$
+	
+	
 	;-> Macros
 	
 	Macro APIENTRY : WINAPI : EndMacro
