@@ -1,6 +1,6 @@
 ﻿;{
 ; * ListComPort.pb
-; Version: 2.1.0
+; Version: 2.1.0-tmp
 ; Author: Herwin Bozet
 ;
 ; License: Unlicense (Public Domain)
@@ -22,7 +22,7 @@ CompilerEndIf
 XIncludeFile "./Includes/ListComPortLocales.pbi"
 XIncludeFile "./Includes/ListComPortErrorCodes.pbi"
 
-XIncludeFile "./Includes/Arguments.pbi"
+XIncludeFile "./Includes/PB-Arguments/Arguments.pbi"
 
 CompilerIf #PB_Compiler_OS = #PB_OS_Windows
 	XIncludeFile "./Includes/ComPortHelper.pbi"
@@ -182,11 +182,13 @@ If Arguments::Init()
 			
 			If *VersionOption\WasUsed
 				PrintN("PB-ListComPort (lscom) v"+#Version$)
+				PrintN("  Arguments v"+Arguments::#Version$)
 				PrintN("  ComPortHelper v"+ComPortHelper::#Version$)
 				PrintN("  RegistryHelper v"+RegistryHelper::#Version$)
 				PrintN("  WinTypes v"+WinTypes::#Version$)
 				PrintN("")
-				PrintN("https://github.com/aziascreations/PB-ListComPort")
+				PrintN(#LSCOM_Locale_Expression_Language$+": "+#LSCOM_Locale_LangName$+" ("+#PBListComPortLang+")")
+				PrintN("GitHub: https://github.com/aziascreations/PB-ListComPort")
 				End ExitCode
 			EndIf
 			

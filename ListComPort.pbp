@@ -7,36 +7,32 @@
   <section name="data">
     <explorer view="C:\ProgramData\PureBasic\Examples\" pattern="0"/>
     <log show="1"/>
-    <lastopen date="2021-06-29 15:37" user="Herwin" host="DESKTOP-FCBVC66"/>
+    <lastopen date="2021-11-08 17:29" user="Herwin" host="DESKTOP-FCBVC66"/>
   </section>
   <section name="files">
-    <file name="Includes\Arguments.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
-      <fingerprint md5="d11b37a645894b6ab5c9d36a6d8f2ec6"/>
-    </file>
     <file name="Includes\ComPortHelper.pbi">
       <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
       <fingerprint md5="2810c7a66be8f7f966b00862ae31538d"/>
     </file>
     <file name="Includes\ListComPortErrorCodes.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
-      <fingerprint md5="98ffb60033f242011ff4b24a82bb0a69"/>
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="++"/>
+      <fingerprint md5="240c6b30cbe3d1480855d40cc055c14d"/>
     </file>
     <file name="Includes\ListComPortLocales.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
-      <fingerprint md5="6b894b716114c4608a3bf20d3bc48aea"/>
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="++"/>
+      <fingerprint md5="c0a7b63890573584cce0cd75250418d1"/>
     </file>
     <file name="Includes\RegistryHelper.pbi">
       <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
       <fingerprint md5="da7f86ef00a92d1f0f2a00a0afcc2635"/>
     </file>
     <file name="Includes\WinTypes.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="++"/>
       <fingerprint md5="c04e98399e85d4e9c756c5a3ac0d6aaf"/>
     </file>
     <file name="ListComPort.pb">
       <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+"/>
-      <fingerprint md5="d92749f6d631fe9b5780354a0e8b7c98"/>
+      <fingerprint md5="0cd32e3d50582f6e870f2e371d774b0c"/>
     </file>
   </section>
   <section name="targets">

@@ -1,11 +1,12 @@
-﻿;{
-; * ListComPortErrorCodes.pbi
-; Version: 2.0.0
-; Author: Herwin Bozet
-;
-; License: Unlicense (Public Domain)
+﻿;{- Code Header
+; ==- Basic Info -================================
+;         Name: ListComPortErrorCodes.pbi
+;      Version: N/A
+;       Author: Herwin Bozet
+; 
+; ==- Links & License -===========================
+;  License: Unlicense
 ;}
-
 
 ;- Compiler Directives
 

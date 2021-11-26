@@ -1,9 +1,11 @@
-﻿;{
-; * ListComPortLocales.pbi
-; Version: 2.0.0
-; Author: Herwin Bozet
-;
-; License: Unlicense (Public Domain)
+﻿;{- Code Header
+; ==- Basic Info -================================
+;         Name: ListComPortLocales.pbi
+;      Version: N/A
+;       Author: Herwin Bozet
+; 
+; ==- Links & License -===========================
+;  License: Unlicense
 ;}
 
 ;- Notes
@@ -46,6 +48,7 @@ CompilerIf #PBListComPortLang = "eng"
 	#LSCOM_Locale_Expression_RawName$ = "Raw name"
 	#LSCOM_Locale_Expression_DeviceName$ = "Device name"
 	#LSCOM_Locale_Expression_FriendlyName$ = "Friendly name"
+	#LSCOM_Locale_Expression_Language$ = "Language"
 	
 	#LSCOM_Locale_Expression_LowerCase_Or$ = "or"
 	#LSCOM_Locale_Expression_LowerCase_And$ = "and"
@@ -110,6 +113,7 @@ CompilerIf #PBListComPortLang = "fra"
 	#LSCOM_Locale_Expression_RawName$ = "Nom brut"
 	#LSCOM_Locale_Expression_DeviceName$ = "Nom appareil"
 	#LSCOM_Locale_Expression_FriendlyName$ = "Nom familier"
+	#LSCOM_Locale_Expression_Language$ = "Langue"
 	
 	#LSCOM_Locale_Expression_LowerCase_Or$ = "ou"
 	#LSCOM_Locale_Expression_LowerCase_And$ = "et"

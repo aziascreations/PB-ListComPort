@@ -65,7 +65,7 @@ Launch arguments:
 ## Error codes
  * Fatal errors (1-9):
    * 1 - The app couldn't open a console to print to it.
-   * 2 - The app can't find 'RegGetValueW' in 'Advapi32.dll'.
+   * 2 - The app can't find 'RegGetValueW' in 'Advapi32.dll'. (No longer used !)
  * Internal argument parser errors (10-19):
    * 10 - Failed to parse the launch arguments, default options will be used.
    * 11 - Failed to register one or more argument, arguments will not be parsed.
@@ -75,6 +75,9 @@ Launch arguments:
  * Application and system errors (30-39):
    * 30 - No friendly name could be found.
    * 31 - No COM port could be found.
+
+## Cloning
+```git clone --recurse-submodules https://github.com/aziascreations/PB-ListComPort```
 
 ## License
 [Unlicense](LICENSE)
