@@ -26,19 +26,19 @@ DeclareModule WinTypes
 	;-> Semver Data
 	
 	#Version_Major = 1
-	#Version_Minor = 0
+	#Version_Minor = 1
 	#Version_Patch = 0
 	#Version_Label$ = ""
-	#Version$ = "1.0.0";+"-"+#Version_Label$
+	#Version$ = "1.1.0";+"-"+#Version_Label$
 	
 	
 	;-> Macros
 	
-	Macro APIENTRY : WINAPI : EndMacro
-	Macro ATOM : WORD : EndMacro
+	Macro APIENTRY : WinTypes::WINAPI : EndMacro
+	Macro ATOM : WinTypes::WORD : EndMacro
 	
 	Macro BOOL : l : EndMacro
-	Macro BOOLEAN : BYTE : EndMacro
+	Macro BOOLEAN : WinTypes::BYTE : EndMacro
 	Macro BYTE : a : EndMacro
 	
 	Macro CCHAR : b : EndMacro
@@ -62,45 +62,45 @@ DeclareModule WinTypes
 	CompilerEndIf
 	
 	Macro HANDLE : i : EndMacro
-	Macro HBITMAP : HANDLE : EndMacro
-	Macro HBRUSH : HANDLE : EndMacro
-	Macro HCOLORSPACE : HANDLE : EndMacro
-	Macro HCONV : HANDLE : EndMacro
-	Macro HCONVLIST : HANDLE : EndMacro
-	Macro HCURSOR : HICON : EndMacro
-	Macro HDC : HANDLE : EndMacro
-	Macro HDDEDATA : HANDLE : EndMacro
-	Macro HDESK : HANDLE : EndMacro
-	Macro HDROP : HANDLE : EndMacro
-	Macro HDWP : HANDLE : EndMacro
-	Macro HENHMETAFILE : HANDLE : EndMacro
+	Macro HBITMAP : WinTypes::HANDLE : EndMacro
+	Macro HBRUSH : WinTypes::HANDLE : EndMacro
+	Macro HCOLORSPACE : WinTypes::HANDLE : EndMacro
+	Macro HCONV : WinTypes::HANDLE : EndMacro
+	Macro HCONVLIST : WinTypes::HANDLE : EndMacro
+	Macro HCURSOR : WinTypes::HICON : EndMacro
+	Macro HDC : WinTypes::HANDLE : EndMacro
+	Macro HDDEDATA : WinTypes::HANDLE : EndMacro
+	Macro HDESK : WinTypes::HANDLE : EndMacro
+	Macro HDROP : WinTypes::HANDLE : EndMacro
+	Macro HDWP : WinTypes::HANDLE : EndMacro
+	Macro HENHMETAFILE : WinTypes::HANDLE : EndMacro
 	Macro HFILE : l : EndMacro
-	Macro HFONT : HANDLE : EndMacro
-	Macro HGDIOBJ : HANDLE : EndMacro
-	Macro HGLOBAL : HANDLE : EndMacro
-	Macro HHOOK : HANDLE : EndMacro
-	Macro HICON : HANDLE : EndMacro
-	Macro HINSTANCE : HANDLE : EndMacro
-	Macro HKEY : HANDLE : EndMacro
-	Macro HKL : HANDLE : EndMacro
-	Macro HLOCAL : HANDLE : EndMacro
-	Macro HMENU : HANDLE : EndMacro
-	Macro HMETAFILE : HANDLE : EndMacro
-	Macro HMODULE : HINSTANCE : EndMacro
-	Macro HMONITOR : HANDLE : EndMacro ; if(WINVER >= 0x0500) typedef HANDLE HMONITOR;
-	Macro HPALETTE : HANDLE : EndMacro
-	Macro HPEN : HANDLE : EndMacro
-	Macro HRESULT : LONG : EndMacro
-	Macro HRGN : HANDLE : EndMacro
-	Macro HRSRC : HANDLE : EndMacro
-	Macro HSZ : HANDLE : EndMacro
-	Macro HWINSTA : HANDLE : EndMacro
-	Macro HWND : HANDLE : EndMacro
+	Macro HFONT : WinTypes::HANDLE : EndMacro
+	Macro HGDIOBJ : WinTypes::HANDLE : EndMacro
+	Macro HGLOBAL : WinTypes::HANDLE : EndMacro
+	Macro HHOOK : WinTypes::HANDLE : EndMacro
+	Macro HICON : WinTypes::HANDLE : EndMacro
+	Macro HINSTANCE : WinTypes::HANDLE : EndMacro
+	Macro HKEY : WinTypes::HANDLE : EndMacro
+	Macro HKL : WinTypes::HANDLE : EndMacro
+	Macro HLOCAL : WinTypes::HANDLE : EndMacro
+	Macro HMENU : WinTypes::HANDLE : EndMacro
+	Macro HMETAFILE : WinTypes::HANDLE : EndMacro
+	Macro HMODULE : WinTypes::HINSTANCE : EndMacro
+	Macro HMONITOR : WinTypes::HANDLE : EndMacro ; if(WINVER >= 0x0500) typedef HANDLE HMONITOR;
+	Macro HPALETTE : WinTypes::HANDLE : EndMacro
+	Macro HPEN : WinTypes::HANDLE : EndMacro
+	Macro HRESULT : WinTypes::LONG : EndMacro
+	Macro HRGN : WinTypes::HANDLE : EndMacro
+	Macro HRSRC : WinTypes::HANDLE : EndMacro
+	Macro HSZ : WinTypes::HANDLE : EndMacro
+	Macro HWINSTA : WinTypes::HANDLE : EndMacro
+	Macro HWND : WinTypes::HANDLE : EndMacro
 	
-	Macro LANGID : WORD : EndMacro
-	Macro LCID : DWORD : EndMacro
-	Macro LCTYPE : DWORD : EndMacro
-	Macro LGRPID : DWORD : EndMacro
+	Macro LANGID : WinTypes::WORD : EndMacro
+	Macro LCID : WinTypes::DWORD : EndMacro
+	Macro LCTYPE : WinTypes::DWORD : EndMacro
+	Macro LGRPID : WinTypes::DWORD : EndMacro
 	
 	; Can be used somewhat interchangeably, but can cause issues with PB's compiler.
 	;Macro LPCWSTR : s : EndMacro
@@ -138,3 +138,10 @@ EndDeclareModule
 Module WinTypes
 	; Nothing...
 EndModule
+
+; IDE Options = PureBasic 5.73 LTS (Windows - x64)
+; CursorPosition = 28
+; FirstLine = 6
+; Folding = --------------
+; EnableXP
+; DPIAware

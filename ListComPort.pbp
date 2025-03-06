@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project xmlns="http://www.purebasic.com/namespace" version="1.0" creator="PureBasic 5.70 LTS (Windows - x64)">
+<project xmlns="http://www.purebasic.com/namespace" version="1.0" creator="PureBasic 5.73 LTS (Windows - x64)">
   <section name="config">
     <options closefiles="1" openmode="0" name="PB-ListComPort"/>
   </section>
   <section name="data">
     <explorer view="C:\ProgramData\PureBasic\Examples\" pattern="0"/>
     <log show="1"/>
-    <lastopen date="2021-11-08 17:29" user="Herwin" host="DESKTOP-FCBVC66"/>
+    <lastopen date="2025-03-06 20:19" user="Herwin" host="DESKTOP-15GVDJD"/>
   </section>
   <section name="files">
     <file name="Includes\ComPortHelper.pbi">
@@ -23,12 +23,12 @@
       <fingerprint md5="c0a7b63890573584cce0cd75250418d1"/>
     </file>
     <file name="Includes\RegistryHelper.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="++"/>
       <fingerprint md5="da7f86ef00a92d1f0f2a00a0afcc2635"/>
     </file>
     <file name="Includes\WinTypes.pbi">
       <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="++"/>
-      <fingerprint md5="c04e98399e85d4e9c756c5a3ac0d6aaf"/>
+      <fingerprint md5="be60df9558676f130059ff92c2b9f501"/>
     </file>
     <file name="ListComPort.pb">
       <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+"/>
@@ -39,7 +39,7 @@
     <target name="eng x64" enabled="1" default="1">
       <inputfile value="ListComPort.pb"/>
       <outputfile value="Build\lscom_eng_x64.exe"/>
-      <compiler version="PureBasic 5.70 LTS (Windows - x64)"/>
+      <compiler version="PureBasic 5.73 LTS (Windows - x64)"/>
       <executable value="Build\lscom_eng_x64.exe"/>
       <options debug="1"/>
       <temporaryexe value="source"/>
